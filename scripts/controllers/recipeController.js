@@ -19,12 +19,15 @@ class RecipeController {
         fetch('data/recipes.json')
             .then((res) => res.json()
             )
+
             .then(({recipes}) => {
                 this.model.setRecipes(recipes);
             })
 
+
     }
 }
+
 
 
 export {RecipeController}

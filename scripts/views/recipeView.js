@@ -53,23 +53,31 @@ export class RecipeView extends Observable {
         //  Création et affichage du DOM ***************************************************************
 
         //  création des tableaux pour les TAG
-        recipes.forEach((recipe, index) => {
-            recipe.ingredients.forEach((ingredient) => {
-                const formattedIngredient = ingredient.ingredient.charAt(0).toUpperCase() + ingredient.ingredient.slice(1);
+        for (let i = 0; i < recipes.length; i++) {
+            const recipe = recipes[i];
+            for (let j = 0; j < recipe.ingredients.length; j++) {
+                const ingredient = recipe.ingredients[j];
+                const formattedIngredient =
+                    ingredient.ingredient.charAt(0).toUpperCase() +
+                    ingredient.ingredient.slice(1);
                 if (!this.ingredients.includes(formattedIngredient)) {
                     this.ingredients.push(formattedIngredient);
                 }
-            });
-            const formattedAppliance = recipe.appliance.charAt(0).toUpperCase() + recipe.appliance.slice(1);
+            }
+            const formattedAppliance =
+                recipe.appliance.charAt(0).toUpperCase() +
+                recipe.appliance.slice(1);
             if (!this.appliance.includes(formattedAppliance)) {
                 this.appliance.push(formattedAppliance);
             }
-            recipe.ustensils.forEach((ustensil) => {
-                const formattedUstensil = ustensil.charAt(0).toUpperCase() + ustensil.slice(1);
+            for (let k = 0; k < recipe.ustensils.length; k++) {
+                const ustensil = recipe.ustensils[k];
+                const formattedUstensil =
+                    ustensil.charAt(0).toUpperCase() + ustensil.slice(1);
                 if (!this.ustensils.includes(formattedUstensil)) {
                     this.ustensils.push(formattedUstensil);
                 }
-            });
+            }
 
             // creation du DOM
             const article = createNewElement('article');
@@ -82,14 +90,16 @@ export class RecipeView extends Observable {
             const timer = createNewElement('p', ['time-recipe'], [], [recipe.time + ' min']);
             const ingredientAndRecipe = createNewElement('div', ['ingredient-recipe-description']);
             const allIngredient = createNewElement('ul', ['all-ingredients']);
-            recipe.ingredients.forEach(function (ingredient) {
+
+            for (let i = 0; i < recipe.ingredients.length; i++) {
+                const ingredient = recipe.ingredients[i];
                 const quantity = ingredient.quantity ? `${ingredient.quantity}` : '';
                 const unit = ingredient.unit ? ` ${ingredient.unit}` : '';
                 const separator = ingredient.unit ? ':' : '';
                 const listIngredient = createNewElement('li', ['list-ingredient'], [], [`${ingredient.ingredient}${separator} ${quantity}${unit}`]);
                 allIngredient.appendChild(listIngredient);
+            }
 
-            });
             const description = createNewElement('p', ['description'], [], [recipe.description]);
 
             article.appendChild(imgDiv);
@@ -102,7 +112,7 @@ export class RecipeView extends Observable {
             timeAndClock.appendChild(timer);
             ingredientAndRecipe.appendChild(allIngredient);
             ingredientAndRecipe.appendChild(description);
-            mainArticle.appendChild(article)
+            mainArticle.appendChild(article);
 
             if (description.innerText.length >= 220) {
                 const text = description.innerText.trim();
@@ -112,51 +122,52 @@ export class RecipeView extends Observable {
                 const substring = text.substring(0, truncatedText.length - firstPunctuation);
                 description.textContent = substring;
             }
-        });
+        };
         // création des tags ****************************************************************const
         const ingredientsTries = this.ingredients.sort();
-        ingredientsTries.forEach(ingredient => {
+        for (let i = 0; i < ingredientsTries.length; i++) {
+            const ingredient = ingredientsTries[i];
             const liIngredient = createNewElement('li', ['ingredient'], [{
                 attribute: 'data-ingredient',
                 content: ingredient
             }], ingredient);
-
             resultIngredient.appendChild(liIngredient);
-        });
+        }
+
         const applianceTries = this.appliance.sort();
-        applianceTries.forEach(appliance => {
+        for (let i = 0; i < applianceTries.length; i++) {
+            const appliance = applianceTries[i];
             const liAppliance = createNewElement('li', ['appliance'], [{
                 attribute: 'data-appliance',
                 content: appliance
             }], appliance);
             resultAppliance.appendChild(liAppliance);
-        });
+        }
+
         const ustensilsTries = this.ustensils.sort();
-        ustensilsTries.forEach(ustensil => {
+        for (let i = 0; i < ustensilsTries.length; i++) {
+            const ustensil = ustensilsTries[i];
             const liUstensil = createNewElement('li', ['ustensils'], [{
                 attribute: 'data-ustensil',
                 content: ustensil
             }], ustensil);
             resultUstensil.appendChild(liUstensil);
-        });
+        }
+
         this.ingredients.sort();
         this.appliance.sort();
         this.ustensils.sort();
 
         // Ouvrir les Tags
-        console.log(ingredientArrow)
         ingredientArrow.addEventListener('click', (event) => {
-        console.log(ingredientArrow.classList.contains('rotate'))
             if (!ingredientArrow.classList.contains('rotate')) {
                 ingredientArrow.classList.add('rotate');
                 resultIngredient.classList.add('display-block');
                 ingredientTags.classList.add('tag-opened-ingredient');
-            console.log('opened')
             } else {
                 ingredientArrow.classList.remove('rotate');
                 resultIngredient.classList.remove('display-block');
                 ingredientTags.classList.remove('tag-opened-ingredient')
-                console.log('closed')
             }
             event.stopImmediatePropagation()
         });
@@ -223,32 +234,40 @@ export class RecipeView extends Observable {
         inputIngredient.addEventListener('input', () => {
             const searchTerm = inputIngredient.value.trim().toLowerCase();
             if (searchTerm.length >= 1) {
-                const matchingIngredients = this.ingredients.filter((ingredient) => ingredient.toLowerCase().includes(searchTerm));
+                const matchingIngredients = [];
+                for (let i = 0; i < this.ingredients.length; i++) {
+                    const ingredient = this.ingredients[i];
+                    if (ingredient.toLowerCase().includes(searchTerm)) {
+                        matchingIngredients.push(ingredient);
+                    }
+                }
                 resultIngredient.innerHTML = '';
-                matchingIngredients.forEach((ingredient) => {
+                for (let i = 0; i < matchingIngredients.length; i++) {
+                    const ingredient = matchingIngredients[i];
                     const li = document.createElement('li');
                     li.textContent = ingredient;
                     resultIngredient.appendChild(li);
-                });
+                }
             } else {
                 resultIngredient.innerHTML = '';
-                this.ingredients.forEach((ingredient) => {
+                for (let i = 0; i < this.ingredients.length; i++) {
+                    const ingredient = this.ingredients[i];
                     const li = document.createElement('li');
                     li.textContent = ingredient;
                     resultIngredient.appendChild(li);
-                });
+                }
             }
         });
 
-        document.querySelectorAll('.ingredient').forEach((ingredient) => {
+        const ingredients = document.querySelectorAll('.ingredient');
+        for (let i = 0; i < ingredients.length; i++) {
+            const ingredient = ingredients[i];
             ingredient.addEventListener('click', (event) => {
                 const data = event.target.getAttribute('data-ingredient');
                 addTagResearch(data);
-                event.stopPropagation()
-                console.log('clic LI')
-            })
-        })
-
+                event.stopPropagation();
+            });
+        }
 
         const addTagUstensil = (data) => {
             const resultTagUstensil = createNewElement('div', ['icone-result-ustensil']);
@@ -268,7 +287,6 @@ export class RecipeView extends Observable {
                         applianceTag: this.applianceTag
                     });
                 }
-                console.log(this.ustensilsTag)
             });
 
 
@@ -285,33 +303,42 @@ export class RecipeView extends Observable {
 
         }
 
-
         inputUstensil.addEventListener('input', () => {
             const searchUstensil = inputUstensil.value.trim().toLowerCase();
             if (searchUstensil.length >= 1) {
-                const matchingUstensil = this.ustensils.filter((ustensil) => ustensil.toLowerCase().includes(searchUstensil));
+                const matchingUstensil = [];
+                for (let i = 0; i < this.ustensils.length; i++) {
+                    const ustensil = this.ustensils[i];
+                    if (ustensil.toLowerCase().includes(searchUstensil)) {
+                        matchingUstensil.push(ustensil);
+                    }
+                }
                 resultUstensil.innerHTML = '';
-                matchingUstensil.forEach((ustensils) => {
+                for (let i = 0; i < matchingUstensil.length; i++) {
+                    const ustensil = matchingUstensil[i];
                     const li = document.createElement('li');
-                    li.textContent = ustensils;
+                    li.textContent = ustensil;
                     resultUstensil.appendChild(li);
-                });
+                }
             } else {
                 resultUstensil.innerHTML = '';
-                this.ustensils.forEach((ustensils) => {
+                for (let i = 0; i < this.ustensils.length; i++) {
+                    const ustensil = this.ustensils[i];
                     const li = document.createElement('li');
-                    li.textContent = ustensils;
+                    li.textContent = ustensil;
                     resultUstensil.appendChild(li);
-                });
+                }
             }
         });
 
-        document.querySelectorAll('.ustensils').forEach((ustensil) => {
+        const ustensilsList = document.querySelectorAll('.ustensils');
+        for (let i = 0; i < ustensilsList.length; i++) {
+            const ustensil = ustensilsList[i];
             ustensil.addEventListener('click', (event) => {
                 const data = event.target.getAttribute('data-ustensil');
                 addTagUstensil(data);
-            })
-        })
+            });
+        }
         const addTagAppliance = (data) => {
             const resultTagAppliance = createNewElement('div', ['icone-result-appliance']);
             const pApplianceResult = createNewElement('p', ['p-icone-result'], [], [data]);
@@ -344,32 +371,41 @@ export class RecipeView extends Observable {
             });
         };
 
-
         inputAplliance.addEventListener('input', () => {
             const searchTerm = inputAplliance.value.trim().toLowerCase();
             if (searchTerm.length >= 1) {
-                const matchingIngredients = this.appliance.filter((appliance) => appliance.toLowerCase().includes(searchTerm));
+                const matchingAppliance = [];
+                for (let i = 0; i < this.appliance.length; i++) {
+                    const appliance = this.appliance[i];
+                    if (appliance.toLowerCase().includes(searchTerm)) {
+                        matchingAppliance.push(appliance);
+                    }
+                }
                 resultAppliance.innerHTML = '';
-                matchingAppliance.forEach((appliance) => {
+                for (let i = 0; i < matchingAppliance.length; i++) {
+                    const appliance = matchingAppliance[i];
                     const li = document.createElement('li');
                     li.textContent = appliance;
                     resultAppliance.appendChild(li);
-                });
+                }
             } else {
                 resultAppliance.innerHTML = '';
-                this.appliance.forEach((appliance) => {
+                for (let i = 0; i < this.appliance.length; i++) {
+                    const appliance = this.appliance[i];
                     const li = document.createElement('li');
                     li.textContent = appliance;
                     resultAppliance.appendChild(li);
-                });
+                }
             }
         });
-        document.querySelectorAll('.appliance').forEach((appliance) => {
+        const applianceElements = document.querySelectorAll('.appliance');
+        for (let i = 0; i < applianceElements.length; i++) {
+            const appliance = applianceElements[i];
             appliance.addEventListener('click', (event) => {
                 const data = event.target.getAttribute('data-appliance');
                 addTagAppliance(data);
-            })
-        })
+            });
+        }
 
         document.getElementById('recherche').addEventListener('input', (e) => {
             let value = e.target.value;

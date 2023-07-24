@@ -1,14 +1,19 @@
 import {Observable} from '../utils/Observable.js';
 
+
 export class RecipesModel extends Observable {
     constructor() {
         super();
         this.recipes = [];
         this.recipesFiltered = [];
         this.value = "";
-        this.newRecipes = [];
-        this.tagContent = [];
+        this.tagContent = {
+            ingredientsTag: [], // Initialisez les tags des ingrédients avec un tableau vide par défaut
+            ustensilsTag: [], // Initialisez les tags des ustensiles avec un tableau vide par défaut
+            applianceTag: [] // Initialisez les tags des appareils avec un tableau vide par défaut
+        };
     }
+
     checkTagsIngredient(recipe, tagsIngredient) {
         return (
             tagsIngredient.length === 0 ||
@@ -23,21 +28,18 @@ export class RecipesModel extends Observable {
             })
         );
     }
+
     checkTagsAppliance(recipe, tagsAppliance) {
-        const result = (
+        return (
             tagsAppliance.length === 0 ||
             tagsAppliance.some((tagAppliance) => {
-                return (
-                    recipe.appliance.toLowerCase().includes(tagAppliance.toLowerCase())
-                );
+                return recipe.appliance.toLowerCase().includes(tagAppliance.toLowerCase());
             })
         );
-
-        return result;
     }
 
     checkTagsUstensils(recipe, tagsUstensils) {
-        const result = (
+        return (
             tagsUstensils.length === 0 ||
             tagsUstensils.every((tagUstensil) => {
                 return recipe.ustensils.some((ustensil) =>
@@ -45,89 +47,56 @@ export class RecipesModel extends Observable {
                 );
             })
         );
-
-        return result;
     }
 
-    searchContent({value}) {
+    searchContent({ value }) {
         this.value = value;
         this.updateFiltered();
     }
+
     searchTag(tagContent) {
-        this.tagContent = tagContent
-        this.updateFiltered()
+        this.tagContent = tagContent;
+        this.updateFiltered();
     }
-    setRecipes(recipes) {
+
+    setRecipes(recipes, tagsIngredient, tagsAppliance, tagsUstensils) {
         this.recipes = recipes;
+        this.tagContent = {
+            ingredientsTag: tagsIngredient || [], // Initialisez les tags des ingrédients avec un tableau vide par défaut si tagsIngredient est undefined
+            ustensilsTag: tagsUstensils || [], // Initialisez les tags des ustensiles avec un tableau vide par défaut si tagsUstensils est undefined
+            applianceTag: tagsAppliance || [] // Initialisez les tags des appareils avec un tableau vide par défaut si tagsAppliance est undefined
+        };
         this.updateFiltered();
     }
 
     updateFiltered() {
-        this.recipesFiltered = this.recipes;
-        let newRecipes = [];
-        let value = this.value;
-        let tagsIngredient = this.tagContent.ingredientsTag;
-        let tagsUstensils = this.tagContent.ustensilsTag;
-        let tagsAppliance = this.tagContent.applianceTag;
-        let noResult = false
+        this.recipesFiltered = [];
 
-        if (value !== "") {
-            this.recipes.forEach((recipe) => {
-                if (
-                    recipe.name.toLowerCase().includes(value) ||
-                    recipe.description.toLowerCase().includes(value) ||
-                    recipe.ingredients.some(
-                        (ingredient) => ingredient.ingredient.toLowerCase().includes(value)
-                    )
-                ) {
-                    noResult = false
-                    newRecipes.push(recipe);
-                }
-                if (newRecipes.length === 0) {
-                    noResult = true
-                }
-            });
-        }
-        //newRecipes = newRecipes.length = 0 ? this.recipes : newRecipes;
-        if (
-            (tagsIngredient && tagsIngredient.length > 0) ||
-            (tagsAppliance && tagsAppliance.length > 0) ||
-            (tagsUstensils && tagsUstensils.length > 0)
-        ) {
-            if (newRecipes && newRecipes.length > 0) {
-                newRecipes = newRecipes.filter((recipe) => {
-                    return (
-                        this.checkTagsIngredient(recipe, tagsIngredient) &&
-                        this.checkTagsAppliance(recipe, tagsAppliance) &&
-                        this.checkTagsUstensils(recipe, tagsUstensils)
-                    );
-                });
-            } else {
-                newRecipes = this.recipes.filter((recipe) => {
-                    return (
-                        this.checkTagsIngredient(recipe, tagsIngredient) &&
-                        this.checkTagsAppliance(recipe, tagsAppliance) &&
-                        this.checkTagsUstensils(recipe, tagsUstensils)
-                    );
-                });
+        for (let i = 0; i < this.recipes.length; i++) {
+            const recipe = this.recipes[i];
+            const searchMatch =
+                recipe.name.toLowerCase().includes(this.value.toLowerCase()) ||
+                recipe.description.toLowerCase().includes(this.value.toLowerCase()) ||
+                recipe.ingredients.some((ingredient) =>
+                    ingredient.ingredient.toLowerCase().includes(this.value.toLowerCase())
+                );
+
+            const tagsMatch =
+                this.checkTagsIngredient(recipe, this.tagContent.ingredientsTag) &&
+                this.checkTagsAppliance(recipe, this.tagContent.applianceTag) &&
+                this.checkTagsUstensils(recipe, this.tagContent.ustensilsTag);
+
+            if (searchMatch && tagsMatch) {
+                this.recipesFiltered.push(recipe);
             }
         }
 
-        if (newRecipes.length !== 0) {
-            this.recipesFiltered = newRecipes;
-        }
-        if (noResult === true) {
-            this.recipesFiltered = [];
-        }
         this.change();
     }
-
 
     change() {
         this.notifyObservers('change', {
             recipes: this.recipesFiltered
         });
-
     }
-
 }
