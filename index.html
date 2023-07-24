@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="assets/miniLogoPetitPlat.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Les petits plats</title>
+</head>
+<body>
+<header>
+    <a href="index.html" class="logo-header">
+        <img src="assets/logoPetitPlat.jpg" alt="logo les petits plats">
+    </a>
+    <form class="form-research" onsubmit="event.preventDefault()">
+        <label for="recherche">Recherche :</label>
+        <input type="search" id="recherche" name="recherche" placeholder="Rechercher une recette">
+        <i class="fas fa-search icon-search"></i>
+    </form>
+    <div class="result-tags-search">
+        <!--
+        <div class="icone-result-ingredient">
+            <p class="p-icone-result"></p>
+        </div>
+        <div class="icone-result-device">
+            <p class="p-icone-result"></p>
+            <i class="far fa-times-circle circle-icone-result"></i>
+        </div>
+        <div class="icone-result-tool">
+            <p class="p-icone-result"></p>
+            <i class="far fa-times-circle circle-icone-result"></i>
+        </div>
+        -->
+    </div>
+
+    <div class="tags">
+        <div class="ingredient-tags">
+            <div>
+                <label for="ingredient">Ingrédient :</label>
+                <input type="search" id="ingredient" name="ingredient" placeholder="Ingrédients">
+                <i class="fas fa-chevron-down tags-arrow" id="arrow-ingredient"></i>
+            </div>
+            <ul class="result-ingredient">
+            </ul>
+        </div>
+        <div class="appliance-tags">
+            <label for="appliance">Appareils :</label>
+            <input type="search" id="appliance" name="appliance" placeholder="Appareils">
+            <i class="fas fa-chevron-down tags-arrow arrow-appliance"></i>
+            <ul class="result-appliance">
+            </ul>
+        </div>
+        <div class="ustensil-tags">
+            <label for="ustensil">Ustensiles :</label>
+            <input type="search" id="ustensil" name="ustensil" placeholder="Ustensiles">
+            <i class="fas fa-chevron-down tags-arrow ustensil-arrow"></i>
+            <ul class="result-ustensil">
+            </ul>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="result-search">
+    </div>
+    <div class="bad-research display-none">
+        <p class="text-bad-research">
+            Aucune recette ne correspond à votre critère… vous pouvez
+            chercher « tarte aux pommes », « poisson », etc.
+        </p>
+    </div>
+</main>
+
+                <script src="https://kit.fontawesome.com/9d90f27afa.js" crossorigin="anonymous"></script>
+                <script  src="scripts/utils/creatNewElement.js"></script>
+                <script type="module" src="scripts/index.js"></script>
+                </body>
+                </html>
